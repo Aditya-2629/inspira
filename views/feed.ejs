@@ -1,0 +1,86 @@
+<% include ./partials/header.ejs %>
+
+<div class="w-full min-h-screen bg-zinc-800 px-4 md:px-10 py-8 text-white">
+  <!-- Sorting Controls -->
+  <div class="mb-8 flex gap-4">
+    <button
+      onclick="shufflePosts()"
+      class="px-4 py-2 bg-zinc-700 rounded-lg hover:bg-zinc-600 transition-colors"
+    >
+      Shuffle Posts
+    </button>
+  </div>
+
+  <!-- Masonry Grid -->
+  <div class="masonry-grid">
+    <% posts.forEach((post, index) => { %>
+    <div
+      class="post-card break-inside-avoid mb-4 bg-zinc-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+      style="animation-delay: <%= (index * 0.1) .toFixed(2) %>s"
+    >
+      <!-- Media Container -->
+      <div class="relative overflow-hidden rounded-t-xl">
+        <!-- Skeleton Loading -->
+        <div
+          class="skeleton absolute inset-0 <%= post.image ? 'hidden' : '' %>"
+        ></div>
+
+        <% if (post.image) { %> <% if (post.image.match(/\.(mp4|webm|ogg)$/i)) {
+        %>
+        <!-- Video Post -->
+        <a href="/post/<%= post._id %>">
+          <video
+            controls
+            src="<%= post.image.replace('/upload/', '/upload/f_auto:video,q_auto,w_400,h_400,c_fill/') %>"
+            class="w-full h-auto rounded-t-xl"
+            preload="metadata"
+            onloadstart="this.previousElementSibling.style.display = 'none'"
+          ></video>
+        </a>
+        <% } else { %>
+        <!-- Image Post -->
+        <a href="/post/<%= post._id %>">
+          <img
+            src="<%= post.image.replace('/upload/', '/upload/f_auto,q_auto,w_400,h_400,c_fill/') %>"
+            alt="<%= post.title %>"
+            class="w-full h-auto rounded-t-xl transition-transform duration-300"
+            loading="lazy"
+            onload="this.previousElementSibling.style.display = 'none'"
+          />
+        </a>
+        <% } %> <% } %>
+
+        <!-- Like Button -->
+        <button
+          class="like-btn <%= post.likes.includes(user?._id) ? 'liked' : '' %>"
+          onclick="likePost('<%= post._id %>', this)"
+        >
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Content Section -->
+      <div class="p-4">
+        <h3 class="text-sm font-semibold mb-1"><%= post.title %></h3>
+        <a
+          href="/profile/<%= post.user._id %>"
+          class="text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+        >
+          @<%= post.user.username %>
+        </a>
+        <div class="text-xs text-zinc-400 mt-1">
+          ❤️ <span class="like-count"><%= post.likes.length %></span> likes
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<script src="/javascripts/feed.js"></script>
+
+<% include ./partials/footer.ejs %>

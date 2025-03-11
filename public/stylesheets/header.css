@@ -1,0 +1,49 @@
+.nav-canvas {
+  background: linear-gradient(
+    90deg,
+    rgba(39, 39, 42, 1) 0%,
+    rgba(24, 24, 27, 0.9) 100%
+  );
+  border-bottom: 1px solid rgba(147, 197, 253, 0.2);
+}
+.inspira-logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+.inspira-logo:hover {
+  transform: scale(1.05);
+}
+.inspira-logo::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(239, 68, 68, 0.7); /* Red-700 subtle underline */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.inspira-logo:hover::after {
+  opacity: 1;
+}
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(147, 197, 253, 0.5); /* Canvas blue */
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.nav-link:hover::after {
+  transform: translateX(0);
+}

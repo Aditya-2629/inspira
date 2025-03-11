@@ -1,0 +1,259 @@
+<%- include('./partials/header.ejs') %>
+
+<div
+  class="profile w-full min-h-screen bg-zinc-900 text-white py-10 px-5 md:px-20"
+>
+  <!-- Profile Header -->
+  <div
+    class="profile-header flex flex-col md:flex-row items-center justify-between mb-8"
+  >
+    <div class="flex items-center space-x-6">
+      <div class="profile-pic-container">
+        <img
+          id="profilePic"
+          src="<%= user.profilePic || '/images/default.png' %>"
+          alt="Profile Picture"
+        />
+        <svg
+          id="profilePicLoader"
+          class="smiley hidden"
+          viewBox="0 0 128 128"
+          width="64px"
+          height="64px"
+          role="img"
+          aria-label="Loading animation"
+        >
+          <defs>
+            <clipPath id="smiley-eyes">
+              <circle
+                class="smiley__eye1"
+                cx="64"
+                cy="64"
+                r="8"
+                transform="rotate(-40,64,64) translate(0,-56)"
+              />
+              <circle
+                class="smiley__eye2"
+                cx="64"
+                cy="64"
+                r="8"
+                transform="rotate(40,64,64) translate(0,-56)"
+              />
+            </clipPath>
+            <linearGradient id="smiley-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#000" />
+              <stop offset="100%" stop-color="#fff" />
+            </linearGradient>
+            <mask id="smiley-mask">
+              <rect
+                x="0"
+                y="0"
+                width="128"
+                height="128"
+                fill="url(#smiley-grad)"
+              />
+            </mask>
+          </defs>
+          <g
+            stroke-linecap="round"
+            stroke-width="12"
+            stroke-dasharray="175.93 351.86"
+          >
+            <g>
+              <rect
+                fill="hsl(193,90%,50%)"
+                width="128"
+                height="64"
+                clip-path="url(#smiley-eyes)"
+              />
+              <g fill="none" stroke="hsl(193,90%,50%)">
+                <circle
+                  class="smiley__mouth1"
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  transform="rotate(180,64,64)"
+                />
+                <circle
+                  class="smiley__mouth2"
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  transform="rotate(0,64,64)"
+                />
+              </g>
+            </g>
+            <g mask="url(#smiley-mask)">
+              <rect
+                fill="hsl(223,90%,50%)"
+                width="128"
+                height="64"
+                clip-path="url(#smiley-eyes)"
+              />
+              <g fill="none" stroke="hsl(223,90%,50%)">
+                <circle
+                  class="smiley__mouth1"
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  transform="rotate(180,64,64)"
+                />
+                <circle
+                  class="smiley__mouth2"
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  transform="rotate(0,64,64)"
+                />
+              </g>
+            </g>
+          </g>
+        </svg>
+        <% if (currentUser && user._id.toString() ===
+        currentUser._id.toString()) { %>
+        <span id="uploadIcon" class="upload-icon">
+          <i class="ri-pencil-fill text-white text-lg"></i>
+        </span>
+        <% } %>
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold"><%= user.name %></h1>
+        <h3 class="text-lg text-gray-400">@<%= user.username %></h3>
+        <p class="text-gray-300 mt-1"><%= user.posts.length %> Posts</p>
+        <p class="text-gray-300 mt-1">
+          <span
+            class="font-semibold cursor-pointer text-blue-400 hover:underline"
+            onclick="openFollowList('followers')"
+          >
+            <span id="followers-count"><%= user.followers.length %></span>
+            Followers
+          </span>
+          <span
+            class="font-semibold ml-4 cursor-pointer text-blue-400 hover:underline"
+            onclick="openFollowList('following')"
+          >
+            <span id="following-count"><%= user.following.length %></span>
+            Following
+          </span>
+        </p>
+        <% if (currentUser && user._id.toString() !==
+        currentUser._id.toString()) { %>
+        <button
+          id="follow-btn"
+          data-id="<%= user._id %>"
+          class="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+        >
+          <%= currentUser.following.includes(user._id) ? 'Unfollow' : 'Follow'
+          %>
+        </button>
+        <% } %>
+      </div>
+    </div>
+    <% if (currentUser && user._id.toString() === currentUser._id.toString()) {
+    %>
+    <a
+      href="/add"
+      class="mt-6 md:mt-0 px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+      >+ New Post</a
+    >
+    <% } %>
+  </div>
+
+  <!-- Posts Section -->
+  <div class="masonry-grid">
+    <% if (user.posts.length > 0) { %> <% user.posts.forEach((post, index) => {
+    %>
+    <div
+      class="post-card break-inside-avoid mb-4 bg-zinc-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+      style="animation-delay: <%= (index * 0.1) .toFixed(2) %>s"
+    >
+      <!-- Media Container -->
+      <div class="relative overflow-hidden rounded-t-xl">
+        <div
+          class="skeleton absolute inset-0 <%= post.image ? 'hidden' : '' %>"
+        ></div>
+        <% if (post.image) { %>
+        <a href="/post/<%= post._id %>">
+          <% if (post.image.match(/\.(mp4|webm|ogg)$/i)) { %>
+          <video
+            src="<%= post.image.replace('/upload/', '/upload/f_auto:video,q_auto,w_400,h_400,c_limit/') %>"
+            class="post-media"
+            preload="metadata"
+            muted
+            playsinline
+            onmouseover="this.play()"
+            onmouseout="this.pause()"
+          ></video>
+          <% } else { %>
+          <img
+            src="<%= post.image.replace('/upload/', '/upload/f_auto,q_auto,w_400,h_400,c_limit/') %>"
+            alt="<%= post.title %>"
+            class="post-media"
+            loading="lazy"
+            onload="this.previousElementSibling.style.display = 'none'"
+          />
+          <% } %>
+        </a>
+        <% } %>
+        <!-- Like Button -->
+        <button
+          class="like-btn <%= post.likes.includes(currentUser?._id) ? 'liked' : '' %>"
+          onclick="likePost('<%= post._id %>', this)"
+        >
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            />
+          </svg>
+        </button>
+      </div>
+      <!-- Content Section -->
+      <div class="p-4">
+        <h3 class="text-sm font-semibold mb-1"><%= post.title %></h3>
+        <a
+          href="/profile/<%= user._id %>"
+          class="text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+        >
+          @<%= user.username %>
+        </a>
+        <div class="text-xs text-zinc-400 mt-1">
+          ❤️ <span class="like-count"><%= post.likes.length %></span> likes
+        </div>
+      </div>
+    </div>
+    <% }) %> <% } else { %>
+    <p class="text-center text-gray-400 col-span-full">
+      No posts yet! Create a new post.
+    </p>
+    <% } %>
+  </div>
+
+  <!-- Follow List Modal -->
+  <div
+    id="followListModal"
+    class="fixed inset-0 hidden bg-black bg-opacity-50 flex justify-center items-center"
+  >
+    <div class="bg-white p-5 rounded-lg w-96 text-black">
+      <h2 id="followListTitle" class="text-xl font-bold mb-3"></h2>
+      <ul id="followList" class="space-y-3 max-h-80 overflow-y-auto"></ul>
+      <button
+        onclick="closeFollowList()"
+        class="mt-3 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- Upload Form -->
+  <form id="uploadForm" hidden>
+    <input type="file" name="image" id="profilePicInput" accept="image/*" />
+  </form>
+  <div id="toast" class="toast"></div>
+</div>
+<script>
+  const currentUserId = "<%= user._id %>"; // Define currentUserId here
+</script>
+<script src="/javascripts/profile.js"></script>
+
+<%- include('./partials/footer.ejs') %>

@@ -1,0 +1,104 @@
+/* Animation Styles */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post-card {
+  animation: fadeIn 0.6s ease-out;
+  position: relative;
+}
+
+/* Skeleton Loading Animation */
+.skeleton {
+  background: linear-gradient(110deg, #3f3f46 8%, #52525b 18%, #3f3f46 33%);
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+/* Grid Layout */
+.masonry-grid {
+  columns: 2;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .masonry-grid {
+    columns: 3;
+  }
+}
+@media (min-width: 1024px) {
+  .masonry-grid {
+    columns: 4;
+  }
+}
+
+/* Like Button */
+.like-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.like-btn:hover {
+  transform: scale(1.1);
+}
+.like-btn.liked {
+  animation: likeAnimation 0.6s ease;
+}
+
+@keyframes likeAnimation {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.like-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: rgba(255, 255, 255, 0.8);
+  stroke: rgba(0, 0, 0, 0.5);
+  stroke-width: 2;
+  transition: fill 0.3s ease;
+}
+
+.like-btn.liked svg {
+  fill: #ed4956;
+  stroke: none;
+}
+
+/* Video Styles */
+video {
+  width: 100%;
+  height: auto;
+  border-radius: 8px 8px 0 0;
+}

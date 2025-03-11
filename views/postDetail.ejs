@@ -1,0 +1,547 @@
+<%- include('./partials/header.ejs') %>
+
+<main class="min-h-screen bg-zinc-950">
+  <div class="container max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
+    <div class="flex flex-col lg:flex-row gap-4 sm:gap-6">
+      <!-- Post Media -->
+      <div
+        class="w-full lg:w-2/3 bg-zinc-900 rounded-lg shadow-lg overflow-hidden relative"
+      >
+        <% if (post.image) { %> <% if (post.image.match(/\.(mp4|webm|ogg)$/i)) {
+        %>
+        <video
+          controls
+          src="<%= post.image.includes('/upload/') ? post.image.replace('/upload/', '/upload/f_auto:video,q_auto,w_800,h_800,c_limit/') : post.image %>"
+          class="w-full h-auto object-contain max-h-[60vh] sm:max-h-[70vh]"
+          preload="metadata"
+          id="post-media"
+        ></video>
+        <% } else { %>
+        <img
+          src="<%= post.image.includes('/upload/') ? post.image.replace('/upload/', '/upload/f_auto,q_auto,w_800,h_800,c_limit/') : post.image %>"
+          alt="<%= post.title %>"
+          class="w-full h-auto object-contain max-h-[60vh] sm:max-h-[70vh]"
+          id="post-media"
+        />
+        <% } %> <% } else { %>
+        <p class="text-zinc-400 text-center py-4">No media available</p>
+        <% } %>
+        <!-- View Media Button -->
+        <button
+          id="view-media-btn"
+          class="absolute top-4 left-4 bg-zinc-800 p-2 rounded-full hover:bg-zinc-700 transition-colors"
+          title="View Media"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-zinc-300"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Post Details -->
+      <div
+        class="w-full lg:w-1/3 flex flex-col bg-zinc-900 rounded-lg shadow-lg p-4 sm:p-6"
+      >
+        <!-- User Info -->
+        <div class="flex items-center gap-3 pb-4 border-b border-zinc-700">
+          <a href="/profile/<%= post.user._id %>">
+            <img
+              src="<%= post.user.profilePic || 'default.png' %>"
+              alt="<%= post.user.username %>"
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-zinc-500 object-cover hover:opacity-80 transition-opacity cursor-pointer"
+            />
+          </a>
+          <div>
+            <a
+              href="/profile/<%= post.user._id %>"
+              class="block text-sm sm:text-base font-semibold text-zinc-100 hover:text-zinc-300 transition-colors"
+            >
+              <%= post.user.username %>
+            </a>
+            <p class="text-xs sm:text-sm text-zinc-400">
+              Posted <%= new Date(post.createdAt).toLocaleDateString() %>
+            </p>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <div class="py-4 space-y-3">
+          <h1 class="text-xl sm:text-2xl font-bold text-zinc-100">
+            <%= post.title %>
+          </h1>
+          <p class="text-zinc-300 text-sm sm:text-base leading-relaxed">
+            <%= post.description %>
+          </p>
+        </div>
+
+        <!-- Likes Section -->
+        <div
+          class="mt-2 flex items-center justify-between bg-zinc-800 p-3 rounded-lg"
+        >
+          <button
+            id="like-btn"
+            class="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-zinc-700 transition-colors text-sm sm:text-base"
+          >
+            <span class="text-red-500">❤️</span>
+            <span id="like-count" data-likes-count
+              ><%= post.likes.length %></span
+            >
+          </button>
+          <p class="text-zinc-300 text-sm sm:text-base">
+            <span class="font-semibold" data-likes-count
+              ><%= post.likes.length %></span
+            >
+            Likes
+          </p>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="flex-1 mt-4 overflow-hidden">
+          <h3 class="text-lg font-semibold mb-3 text-zinc-100">
+            Comments (<span id="comment-count"><%= post.comments.length %></span
+            >)
+          </h3>
+
+          <ul
+            id="comment-list"
+            class="space-y-3 overflow-y-auto max-h-[300px] pr-2"
+          >
+            <% post.comments.forEach(comment => { %>
+            <li
+              class="flex gap-3 p-3 bg-zinc-800 rounded-lg group relative"
+              data-comment-id="<%= comment._id %>"
+            >
+              <a href="/profile/<%= comment.user._id %>">
+                <img
+                  src="<%= comment.user.profilePic || 'default.png' %>"
+                  alt="<%= comment.user.username %>"
+                  class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-zinc-500 object-cover hover:opacity-80 transition-opacity cursor-pointer"
+                />
+              </a>
+              <div class="flex-1 min-w-0">
+                <div
+                  class="flex flex-col sm:flex-row sm:items-center gap-1 mb-1"
+                >
+                  <a
+                    href="/profile/<%= comment.user._id %>"
+                    class="text-sm font-semibold text-zinc-100 hover:text-zinc-300 transition-colors truncate"
+                  >
+                    <%= comment.user.username %>
+                  </a>
+                  <span class="text-xs text-zinc-400">
+                    <%= new Date(comment.createdAt).toLocaleString() %>
+                  </span>
+                </div>
+                <p class="text-zinc-300 text-sm break-words">
+                  <%= comment.text %>
+                </p>
+              </div>
+              <% if (user && comment.user._id.toString() ===
+              user._id.toString()) { %>
+              <button
+                class="delete-comment sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-300 absolute right-2 top-2"
+                data-id="<%= comment._id %>"
+              >
+                <i class="ri-close-line text-lg"></i>
+              </button>
+              <% } %>
+            </li>
+            <% }) %>
+          </ul>
+        </div>
+
+        <!-- Comment Input -->
+        <% if (user) { %>
+        <div
+          class="sticky bottom-0 bg-zinc-900 pt-4 -mx-2 sm:-mx-0 px-2 sm:px-0"
+        >
+          <form id="comment-form" class="flex gap-2">
+            <input
+              type="text"
+              id="comment-input"
+              placeholder="Add a comment..."
+              class="flex-1 px-3 py-2 bg-zinc-800 text-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 text-sm sm:text-base"
+              required
+            />
+            <button
+              type="submit"
+              id="comment-btn"
+              class="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors text-sm sm:text-base disabled:opacity-50"
+              disabled
+            >
+              Post
+            </button>
+          </form>
+        </div>
+        <% } else { %>
+        <div class="mt-4 pt-4 border-t border-zinc-700 text-center">
+          <p class="text-zinc-400 text-sm">
+            <a
+              href="/"
+              class="text-zinc-300 hover:text-zinc-200 transition-colors"
+              >Login</a
+            >
+            to join the conversation
+          </p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Media Modal -->
+  <div
+    id="image-modal"
+    class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50 transition-opacity duration-300"
+  >
+    <div
+      id="modal-content"
+      class="bg-zinc-900 p-4 rounded-lg shadow-lg max-w-3xl w-full transform transition-transform duration-300 scale-95"
+    >
+      <div class="relative">
+        <% if (post.image && post.image.match(/\.(mp4|webm|ogg)$/i)) { %>
+        <video
+          controls
+          id="modal-media"
+          src="<%= post.image.includes('/upload/') ? post.image.replace('/upload/', '/upload/f_auto:video,q_auto,w_1200,h_1200,c_limit/') : post.image %>"
+          class="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+        ></video>
+        <% } else { %>
+        <img
+          id="modal-media"
+          src="<%= post.image ? (post.image.includes('/upload/') ? post.image.replace('/upload/', '/upload/f_auto,q_auto,w_1200,h_1200,c_limit/') : post.image) : '' %>"
+          alt="Full Media"
+          class="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+        />
+        <% } %>
+        <button
+          id="close-modal-btn"
+          class="absolute top-2 right-2 bg-zinc-800 p-2 rounded-full hover:bg-zinc-700 text-zinc-300 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="mt-4 flex justify-center">
+        <button
+          id="download-btn"
+          class="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
+          </svg>
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const socket = io();
+    const postId = "<%- post._id %>";
+    const userId = "<%- user ? user._id : '' %>";
+    const postMediaSrc = "<%= post.image %>";
+    const postTitle = "<%- post.title %>";
+    const fileExtension =
+      "<%= post.image ? post.image.split('.').pop() : '' %>";
+    const isVideo = postMediaSrc.match(/\.(mp4|webm|ogg)$/i);
+
+    console.log("Raw post.image:", "<%= post.image %>"); // Debug Cloudinary URL
+
+    // Enable/Disable Comment Button Based on Input
+    const commentInput = document.getElementById("comment-input");
+    const commentBtn = document.getElementById("comment-btn");
+    if (commentInput && commentBtn) {
+      commentInput.addEventListener("input", () => {
+        commentBtn.disabled = !commentInput.value.trim();
+      });
+    }
+
+    // Like Button Handler
+    const likeBtn = document.getElementById("like-btn");
+    if (likeBtn) {
+      likeBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          const response = await fetch(`/like/${postId}`, { method: "POST" });
+          const data = await response.json();
+          if (data.success) {
+            document.querySelectorAll("[data-likes-count]").forEach((el) => {
+              el.textContent = data.likes;
+            });
+            socket.emit("likeUpdate", { postId, likes: data.likes });
+          }
+        } catch (error) {
+          console.error("Like error:", error);
+          alert("Failed to update like");
+        }
+      });
+    }
+
+    // Comment Form Handler
+    const commentForm = document.getElementById("comment-form");
+    if (commentForm) {
+      commentForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const input = document.getElementById("comment-input");
+        const commentText = input.value.trim();
+        if (!commentText) return;
+
+        commentBtn.disabled = true;
+        try {
+          const response = await fetch(`/comment/${postId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ comment: commentText }),
+          });
+          const data = await response.json();
+          if (data.success && data.comment) {
+            const commentList = document.getElementById("comment-list");
+            const commentCount = document.getElementById("comment-count");
+            const newComment = document.createElement("li");
+            newComment.className =
+              "flex gap-3 p-3 bg-zinc-800 rounded-lg group relative";
+            newComment.dataset.commentId = data.comment._id;
+            newComment.innerHTML = `
+            <a href="/profile/${data.comment.user._id}">
+              <img src="${data.comment.user.profilePic || "default.png"}" 
+                   alt="${data.comment.user.username}"
+                   class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-zinc-500 object-cover hover:opacity-80 transition-opacity cursor-pointer">
+            </a>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 mb-1">
+                <a href="/profile/${data.comment.user._id}" 
+                   class="text-sm font-semibold text-zinc-100 hover:text-zinc-300 transition-colors truncate">
+                  ${data.comment.user.username}
+                </a>
+                <span class="text-xs text-zinc-400">
+                  ${new Date(data.comment.createdAt).toLocaleString()}
+                </span>
+              </div>
+              <p class="text-zinc-300 text-sm break-words">${
+                data.comment.text
+              }</p>
+            </div>
+            ${
+              data.comment.user._id === userId
+                ? `<button class="delete-comment sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-300 absolute right-2 top-2" data-id="${data.comment._id}">
+                   <i class="ri-close-line text-lg"></i>
+                 </button>`
+                : ""
+            }
+          `;
+            commentList.appendChild(newComment);
+            commentCount.textContent = parseInt(commentCount.textContent) + 1;
+            input.value = "";
+            socket.emit("commentUpdate", { postId, comment: data.comment });
+          } else {
+            throw new Error(data.message || "Failed to post comment");
+          }
+        } catch (error) {
+          console.error("Comment error:", error);
+          alert("Failed to post comment: " + error.message);
+        } finally {
+          commentBtn.disabled = !input.value.trim();
+        }
+      });
+    }
+
+    // Delete Comment Handler
+    document.addEventListener("click", async (e) => {
+      const deleteBtn = e.target.closest(".delete-comment");
+      if (deleteBtn) {
+        const commentId = deleteBtn.dataset.id;
+        if (!confirm("Are you sure you want to delete this comment?")) return;
+
+        try {
+          const response = await fetch(`/comment/${commentId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+          });
+          const data = await response.json();
+          if (data.success) {
+            deleteBtn.closest("li").remove();
+            const commentCount = document.getElementById("comment-count");
+            commentCount.textContent = parseInt(commentCount.textContent) - 1;
+          } else {
+            throw new Error(data.message || "Failed to delete comment");
+          }
+        } catch (error) {
+          console.error("Delete comment error:", error);
+          alert("Failed to delete comment: " + error.message);
+        }
+      }
+    });
+
+    // Real-time Updates
+    socket.on("likeUpdate", (data) => {
+      if (data.postId === postId) {
+        document.querySelectorAll("[data-likes-count]").forEach((el) => {
+          el.textContent = data.likes;
+        });
+      }
+    });
+
+    socket.on("commentUpdate", (data) => {
+      if (data.postId === postId && data.comment) {
+        const commentList = document.getElementById("comment-list");
+        const commentCount = document.getElementById("comment-count");
+        const existingComment = document.querySelector(
+          `[data-comment-id="${data.comment._id}"]`
+        );
+        if (!existingComment) {
+          const newComment = document.createElement("li");
+          newComment.className =
+            "flex gap-3 p-3 bg-zinc-800 rounded-lg group relative";
+          newComment.dataset.commentId = data.comment._id;
+          newComment.innerHTML = `
+          <a href="/profile/${data.comment.user._id}">
+            <img src="${data.comment.user.profilePic || "default.png"}" 
+                 alt="${data.comment.user.username}"
+                 class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-zinc-500 object-cover hover:opacity-80 transition-opacity cursor-pointer">
+          </a>
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 mb-1">
+              <a href="/profile/${data.comment.user._id}" 
+                 class="text-sm font-semibold text-zinc-100 hover:text-zinc-300 transition-colors truncate">
+                ${data.comment.user.username}
+              </a>
+              <span class="text-xs text-zinc-400">
+                ${new Date(data.comment.createdAt).toLocaleString()}
+              </span>
+            </div>
+            <p class="text-zinc-300 text-sm break-words">${
+              data.comment.text
+            }</p>
+          </div>
+          ${
+            data.comment.user._id === userId
+              ? `<button class="delete-comment sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-300 absolute right-2 top-2" data-id="${data.comment._id}">
+                 <i class="ri-close-line text-lg"></i>
+               </button>`
+              : ""
+          }
+        `;
+          commentList.appendChild(newComment);
+          commentCount.textContent = parseInt(commentCount.textContent) + 1;
+        }
+      }
+    });
+
+    // Media Modal Functionality
+    const viewMediaBtn = document.getElementById("view-media-btn");
+    const imageModal = document.getElementById("image-modal");
+    const modalContent = document.getElementById("modal-content");
+    const modalMedia = document.getElementById("modal-media");
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    const downloadBtn = document.getElementById("download-btn");
+
+    if (viewMediaBtn) {
+      viewMediaBtn.addEventListener("click", () => {
+        const transformedSrc = postMediaSrc.includes("/upload/")
+          ? postMediaSrc.replace(
+              "/upload/",
+              `/upload/f_auto${
+                isVideo ? ":video" : ""
+              },q_auto,w_1200,h_1200,c_limit/`
+            )
+          : postMediaSrc;
+        modalMedia.src = transformedSrc;
+        imageModal.classList.remove("hidden");
+        setTimeout(() => {
+          imageModal.classList.remove("opacity-0");
+          modalContent.classList.remove("scale-95");
+          modalContent.classList.add("scale-100");
+        }, 10);
+      });
+    }
+
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener("click", () => {
+        imageModal.classList.add("opacity-0");
+        modalContent.classList.remove("scale-100");
+        modalContent.classList.add("scale-95");
+        setTimeout(() => imageModal.classList.add("hidden"), 300);
+      });
+    }
+
+    if (imageModal) {
+      imageModal.addEventListener("click", (e) => {
+        if (e.target === imageModal) closeModalBtn.click();
+      });
+    }
+
+    // Download Functionality
+    if (downloadBtn) {
+      downloadBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const downloadSrc = postMediaSrc.includes("/upload/")
+          ? postMediaSrc.replace(
+              "/upload/",
+              `/upload/f_auto${
+                isVideo ? ":video" : ""
+              },q_auto,w_1200,h_1200,c_limit,fl_attachment/`
+            )
+          : postMediaSrc;
+        try {
+          const response = await fetch(downloadSrc, { mode: "cors" });
+          if (!response.ok)
+            throw new Error(`Fetch failed: ${response.statusText}`);
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          const sanitizedTitle = postTitle.replace(/[^a-zA-Z0-9-_]/g, "_");
+          link.href = url;
+          link.download = `${sanitizedTitle}.${fileExtension}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error("Download error:", error);
+          alert("Failed to download media. Check Cloudinary settings or URL.");
+        }
+      });
+    }
+  });
+</script>
+
+<%- include('./partials/footer.ejs') %>

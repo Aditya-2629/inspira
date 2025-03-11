@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/images/favicon-16x16.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/images/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Correct Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Toastify CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+
+    <!-- ! linking of stylesheets -->
+    <link rel="stylesheet" href="/stylesheets/footer.css" />
+    <link rel="stylesheet" href="/stylesheets/add.css" />
+    <link rel="stylesheet" href="/stylesheets/feed.css" />
+    <link rel="stylesheet" href="/stylesheets/index.css" />
+    <link rel="stylesheet" href="/stylesheets/profile.css" />
+    <!-- ! linking of stylesheets -->
+
+    <link rel="stylesheet" href="/stylesheets/header.css" />
+    <title>Inspira</title>
+  </head>
+  <body class="bg-zinc-950">
+    <nav class="w-full nav-canvas text-white fixed top-0 left-0 z-50">
+      <div class="container mx-auto px-4 sm:px-6 py-4">
+        <div
+          class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0"
+        >
+          <!-- Logo Section -->
+          <a href="/feed" class="inspira-logo">
+            <i class="ri-lightbulb-flash-line ri-2x text-red-700 mr-2"></i>
+            <h3 class="text-xl font-semibold">Inspira</h3>
+          </a>
+
+          <!-- Navigation Links -->
+          <% if (nav === true) { %>
+          <div class="flex items-center gap-6 sm:gap-8 text-sm sm:text-base">
+            <a
+              href="/profile"
+              class="nav-link text-zinc-300 hover:text-white transition-colors"
+              >Profile</a
+            >
+            <a
+              href="/feed"
+              class="nav-link text-zinc-300 hover:text-white transition-colors"
+              >Feed</a
+            >
+            <a
+              href="/logout"
+              class="px-4 py-2 bg-red-700 hover:bg-red-600 text-white rounded-lg transition-colors"
+              >Logout</a
+            >
+          </div>
+          <% } else { %>
+          <div class="flex items-center gap-6 sm:gap-8 text-sm sm:text-base">
+            <a
+              href="/"
+              class="nav-link text-zinc-300 hover:text-white transition-colors"
+              >Login</a
+            >
+            <a
+              href="/register"
+              class="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors"
+              >Register</a
+            >
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Spacer to prevent content overlap with fixed nav -->
+    <div class="h-20"></div>
+
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  </body>
+</html>

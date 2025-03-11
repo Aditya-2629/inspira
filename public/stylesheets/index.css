@@ -1,0 +1,48 @@
+.auth-container {
+  background: linear-gradient(135deg, #18181b 0%, #27272a 100%);
+}
+
+.auth-card {
+  background: rgba(39, 39, 42, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-input {
+  background: #3f3f46;
+  transition: all 0.2s;
+}
+
+.auth-input:focus {
+  background: #52525b;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.auth-btn {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transition: all 0.2s;
+}
+
+.auth-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1),
+    0 2px 4px -1px rgba(220, 38, 38, 0.06);
+}
+
+.auth-btn:active {
+  transform: translateY(0);
+}
+
+.auth-link {
+  color: #a1a1aa;
+  transition: color 0.2s;
+}
+
+.auth-link:hover {
+  color: #f4f4f5;
+}
+
+.ri-icon {
+  color: #dc2626;
+}

@@ -1,0 +1,298 @@
+<% include ./partials/header.ejs %>
+
+<div
+  class="flex items-center justify-center min-h-screen bg-zinc-900 px-5 py-10"
+>
+  <div class="w-full max-w-xl bg-zinc-800 p-6 rounded-lg shadow-lg">
+    <h1 class="text-2xl font-semibold text-white text-center">
+      Create a New Post
+    </h1>
+    <hr class="opacity-20 my-3" />
+
+    <form
+      id="postForm"
+      action="/createpost"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <div class="upload-container" id="uploadContainer">
+        <input
+          type="file"
+          name="postImage"
+          id="imageUpload"
+          class="absolute inset-0 opacity-0 cursor-pointer"
+          accept="image/*,video/mp4,video/webm,video/ogg"
+          onchange="previewMedia(event)"
+        />
+        <img
+          id="previewImg"
+          class="absolute w-full h-full object-cover hidden rounded-lg"
+        />
+        <video
+          id="previewVideo"
+          class="absolute w-full h-full object-cover hidden rounded-lg"
+          controls
+        ></video>
+        <span id="uploadText" class="upload-text"
+          >Drag & drop or click to upload an image or video (max 120s)</span
+        >
+        <svg
+          id="spinner"
+          role="img"
+          aria-label="Smiley animation"
+          class="smiley hidden"
+          viewBox="0 0 128 128"
+          width="128px"
+          height="128px"
+        >
+          <defs>
+            <clipPath id="smiley-eyes">
+              <circle
+                class="smiley__eye1"
+                cx="64"
+                cy="64"
+                r="8"
+                transform="rotate(-40,64,64) translate(0,-56)"
+              />
+              <circle
+                class="smiley__eye2"
+                cx="64"
+                cy="64"
+                r="8"
+                transform="rotate(40,64,64) translate(0,-56)"
+              />
+            </clipPath>
+            <linearGradient id="smiley-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#000" />
+              <stop offset="100%" stop-color="#fff" />
+            </linearGradient>
+            <mask id="smiley-mask">
+              <rect
+                x="0"
+                y="0"
+                width="128"
+                height="128"
+                fill="url(#smiley-grad)"
+              />
+            </mask>
+          </defs>
+          <g
+            stroke-linecap="round"
+            stroke-width="12"
+            stroke-dasharray="175.93 351.86"
+          >
+            <g>
+              <rect
+                fill="hsl(193,90%,50%)"
+                width="128"
+                height="64"
+                clip-path="url(#smiley-eyes)"
+              />
+              <g fill="none" stroke="hsl(193,90%,50%)">
+                <circle
+                  class="smiley__mouth1"
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  transform="rotate(180,64,64)"
+                />
+                <circle
+                  class="smiley__mouth2"
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  transform="rotate(0,64,64)"
+                />
+              </g>
+            </g>
+            <g mask="url(#smiley-mask)">
+              <rect
+                fill="hsl(223,90%,50%)"
+                width="128"
+                height="64"
+                clip-path="url(#smiley-eyes)"
+              />
+              <g fill="none" stroke="hsl(223,90%,50%)">
+                <circle
+                  class="smiley__mouth1"
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  transform="rotate(180,64,64)"
+                />
+                <circle
+                  class="smiley__mouth2"
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  transform="rotate(0,64,64)"
+                />
+              </g>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <input
+        class="w-full px-4 py-2 bg-zinc-700 mt-3 border-2 border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+        name="title"
+        type="text"
+        placeholder="Title"
+        required
+      />
+
+      <textarea
+        class="w-full h-40 px-4 py-2 bg-zinc-700 mt-3 border-2 border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+        name="description"
+        placeholder="Write a description..."
+        required
+      ></textarea>
+
+      <button id="submitBtn" class="submit-btn" type="submit" disabled>
+        Post
+      </button>
+    </form>
+
+    <div id="toast" class="toast"></div>
+  </div>
+</div>
+
+<script>
+  const elements = {
+    form: document.getElementById("postForm"),
+    uploadContainer: document.getElementById("uploadContainer"),
+    fileInput: document.getElementById("imageUpload"),
+    previewImg: document.getElementById("previewImg"),
+    previewVideo: document.getElementById("previewVideo"),
+    uploadText: document.getElementById("uploadText"),
+    spinner: document.getElementById("spinner"),
+    submitBtn: document.getElementById("submitBtn"),
+    toast: document.getElementById("toast"),
+  };
+
+  let isSubmitting = false;
+  const MAX_DURATION = 120; // Max video duration in seconds
+
+  // Handle drag events
+  elements.uploadContainer.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    elements.uploadContainer.classList.add("dragover");
+  });
+  elements.uploadContainer.addEventListener("dragleave", (e) => {
+    e.preventDefault();
+    elements.uploadContainer.classList.remove("dragover");
+  });
+  elements.uploadContainer.addEventListener("drop", handleDrop);
+
+  // Preview image or video with duration check
+  function previewMedia(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (file.type.startsWith("image/")) {
+        elements.previewImg.src = reader.result;
+        elements.previewImg.classList.remove("hidden");
+        elements.previewVideo.classList.add("hidden");
+        elements.submitBtn.disabled = false;
+      } else if (file.type.startsWith("video/")) {
+        const video = document.createElement("video");
+        video.src = reader.result;
+        video.onloadedmetadata = () => {
+          if (video.duration > MAX_DURATION) {
+            showToast(`Video exceeds ${MAX_DURATION} seconds limit!`, "error");
+            elements.fileInput.value = "";
+            elements.previewVideo.classList.add("hidden");
+            elements.uploadText.classList.remove("hidden");
+            elements.submitBtn.disabled = true;
+          } else {
+            elements.previewVideo.src = reader.result;
+            elements.previewVideo.classList.remove("hidden");
+            elements.previewImg.classList.add("hidden");
+            elements.submitBtn.disabled = false;
+          }
+        };
+      }
+      elements.uploadText.classList.add("hidden");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleDrop(event) {
+    event.preventDefault();
+    elements.uploadContainer.classList.remove("dragover");
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      elements.fileInput.files = event.dataTransfer.files;
+      previewMedia({ target: elements.fileInput });
+    }
+  }
+
+  function showToast(message, type = "success") {
+    elements.toast.textContent = message;
+    elements.toast.className = `toast ${type} show`;
+    setTimeout(() => (elements.toast.className = `toast ${type}`), 3000);
+  }
+
+  function resetForm() {
+    elements.submitBtn.disabled = true;
+    elements.spinner.classList.add("hidden");
+    elements.uploadContainer.style.pointerEvents = "auto";
+    elements.uploadContainer.style.opacity = "1";
+    elements.form.reset();
+    elements.previewImg.classList.add("hidden");
+    elements.previewVideo.classList.add("hidden");
+    elements.uploadText.classList.remove("hidden");
+    elements.fileInput.value = "";
+  }
+
+  // Display error from query param if present
+  const urlParams = new URLSearchParams(window.location.search);
+  const error = urlParams.get("error");
+  if (error) {
+    showToast(error, "error");
+    history.replaceState(null, "", window.location.pathname);
+  }
+
+  elements.form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (isSubmitting) return;
+
+    isSubmitting = true;
+    elements.spinner.classList.remove("hidden");
+    elements.uploadContainer.style.pointerEvents = "none";
+    elements.uploadContainer.style.opacity = "0.5";
+
+    const file = elements.fileInput.files[0];
+    if (!file) {
+      showToast("Please upload an image or video!", "error");
+      resetForm();
+      isSubmitting = false;
+      return;
+    }
+
+    try {
+      const formData = new FormData(elements.form);
+      const response = await fetch("/createpost", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to create post: ${errorText}`);
+      }
+
+      showToast("Post created successfully!", "success");
+      setTimeout(() => (window.location.href = "/profile"), 2000);
+    } catch (error) {
+      showToast(`Error: ${error.message}`, "error");
+      resetForm();
+    } finally {
+      isSubmitting = false;
+    }
+  });
+</script>
+
+<% include ./partials/footer.ejs %>

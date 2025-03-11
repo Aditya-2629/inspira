@@ -1,0 +1,78 @@
+<%- include('./partials/header.ejs') %>
+
+<div
+  class="min-h-screen bg-zinc-900 text-white flex justify-center items-center"
+>
+  <div class="bg-zinc-800 p-6 rounded-lg shadow-lg w-96">
+    <h2 class="text-2xl font-semibold mb-4"><%= title %></h2>
+
+    <% if (users.length > 0) { %>
+    <ul class="space-y-4">
+      <% users.forEach(user => { %>
+      <li class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <img
+            class="w-10 h-10 rounded-full object-cover"
+            src="<%= user.profilePic %>"
+            alt="Profile Picture"
+            onerror="this.src='/images/default.jpg'"
+            <!--
+            Fallback
+            --
+          />
+          />
+          <a
+            href="/profile/<%= user._id %>"
+            class="text-lg font-medium hover:underline"
+            ><%= user.username %></a
+          >
+        </div>
+        <% if (currentUser && currentUser._id.toString() !==
+        user._id.toString()) { %>
+        <button
+          class="unfollow-btn bg-red-500 text-white px-3 py-1 rounded-md text-sm"
+          data-id="<%= user._id %>"
+        >
+          Unfollow
+        </button>
+        <% } %>
+      </li>
+      <% }) %>
+    </ul>
+    <% } else { %>
+    <p class="text-center text-gray-400">No users found.</p>
+    <% } %>
+
+    <button
+      onclick="window.history.back()"
+      class="mt-4 w-full bg-gray-700 text-white py-2 rounded-lg"
+    >
+      Close
+    </button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll(".unfollow-btn").forEach((button) => {
+    button.addEventListener("click", async (e) => {
+      const userId = e.target.dataset.id;
+      try {
+        const response = await fetch(`/unfollow/${userId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await response.json();
+        if (data.success) {
+          e.target.parentElement.remove();
+          console.log("Unfollowed successfully");
+        } else {
+          console.error("Unfollow failed:", data.message);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    });
+  });
+</script>
+
+<%- include('./partials/footer.ejs') %>
