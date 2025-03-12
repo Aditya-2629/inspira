@@ -530,7 +530,7 @@ router.post("/forgot-password", async (req, res) => {
     await user.save();
 
     // Send reset email
-    const resetUrl = `https://inspira-ggqm.onrender.com/users/reset-password/${resetToken}`;
+    const resetUrl = `https://inspira-nmhu.onrender.com/users/reset-password/${resetToken}`;
     await sendPasswordResetRequest(user.email, resetUrl);
 
     res.status(200).json({

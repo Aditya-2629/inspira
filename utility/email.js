@@ -39,7 +39,7 @@ async function sendWelcomeEmail(to, username) {
                   <table cellpadding="0" cellspacing="0" border="0" width="100%">
                     <tr>
                       <td align="center">
-                        <a href="https://inspira-ggqm.onrender.com/profile" style="display: inline-block; background: #dc2626; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold;">Explore Your Profile</a>
+                        <a href="https://inspira-nmhu.onrender.com/profile" style="display: inline-block; background: #dc2626; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold;">Explore Your Profile</a>
                       </td>
                     </tr>
                   </table>
@@ -49,7 +49,7 @@ async function sendWelcomeEmail(to, username) {
                 <td style="padding: 20px 40px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
                   <p style="color: #a1a1aa; font-size: 12px; margin: 0 0 10px;">Need help? <a href="mailto:support@yourapp.com" style="color: #dc2626; text-decoration: none;">Contact us</a></p>
                   <p style="color: #71717a; font-size: 10px; margin: 0;">
-                    © 2025 Inspira. All rights reserved. | <a href="https://inspira-ggqm.onrender.com/privacy" style="color: #a1a1aa; text-decoration: none;">Privacy Policy</a> | <a href="https://inspira-ggqm.onrender.com/terms" style="color: #a1a1aa; text-decoration: none;">Terms of Service</a>
+                    © 2025 Inspira. All rights reserved. | <a href="https://inspira-nmhu.onrender.com/privacy" style="color: #a1a1aa; text-decoration: none;">Privacy Policy</a> | <a href="https://inspira-nmhu.onrender.com/terms" style="color: #a1a1aa; text-decoration: none;">Terms of Service</a>
                   </p>
                 </td>
               </tr>
@@ -110,7 +110,7 @@ async function sendPasswordResetRequest(to, resetUrl) {
                 <td style="padding: 20px 40px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
                   <p style="color: #a1a1aa; font-size: 12px; margin: 0 0 10px;">Didn’t request this? <a href="mailto:support@yourapp.com" style="color: #dc2626; text-decoration: none;">Contact us</a></p>
                   <p style="color: #71717a; font-size: 10px; margin: 0;">
-                    © 2025 Inspira. All rights reserved. | <a href="https://inspira-ggqm.onrender.com/privacy" style="color: #a1a1aa; text-decoration: none;">Privacy Policy</a> | <a href="https://inspira-ggqm.onrender.com/terms" style="color: #a1a1aa; text-decoration: none;">Terms of Service</a>
+                    © 2025 Inspira. All rights reserved. | <a href="https://inspira-nmhu.onrender.com/privacy" style="color: #a1a1aa; text-decoration: none;">Privacy Policy</a> | <a href="https://inspira-nmhu.onrender.com/terms" style="color: #a1a1aa; text-decoration: none;">Terms of Service</a>
                   </p>
                 </td>
               </tr>
@@ -161,7 +161,7 @@ async function sendPasswordResetConfirmation(to, username) {
                   <table cellpadding="0" cellspacing="0" border="0" width="100%">
                     <tr>
                       <td align="center">
-                        <a href="https://inspira-ggqm.onrender.com/login" style="display: inline-block; background: #dc2626; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold;">Log In Now</a>
+                        <a href="https://inspira-nmhu.onrender.com/login" style="display: inline-block; background: #dc2626; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold;">Log In Now</a>
                       </td>
                     </tr>
                   </table>
@@ -171,7 +171,7 @@ async function sendPasswordResetConfirmation(to, username) {
                 <td style="padding: 20px 40px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
                   <p style="color: #a1a1aa; font-size: 12px; margin: 0 0 10px;">Questions? <a href="mailto:support@yourapp.com" style="color: #dc2626; text-decoration: none;">Contact us</a></p>
                   <p style="color: #71717a; font-size: 10px; margin: 0;">
-                    © 2025 Inspira. All rights reserved. | <a href="https://inspira-ggqm.onrender.com/privacy" style="color: #a1a1aa; text-decoration: none;">Privacy Policy</a> | <a href="https://inspira-ggqm.onrender.com/terms" style="color: #a1a1aa; text-decoration: none;">Terms of Service</a>
+                    © 2025 Inspira. All rights reserved. | <a href="https://inspira-nmhu.onrender.com/privacy" style="color: #a1a1aa; text-decoration: none;">Privacy Policy</a> | <a href="https://inspira-nmhu.onrender.com/terms" style="color: #a1a1aa; text-decoration: none;">Terms of Service</a>
                   </p>
                 </td>
               </tr>
