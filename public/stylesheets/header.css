@@ -47,3 +47,10 @@
 .nav-link:hover::after {
   transform: translateX(0);
 }
+ 
+ /*this give some margin bottom nav bar dose not overlap our main content */ 
+@media (max-width: 640px) {
+  .nav-canvas {
+    margin-bottom: 20px; /* Adjust the margin as needed */
+  }
+}
