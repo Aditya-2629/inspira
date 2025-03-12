@@ -1,10 +1,20 @@
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
+const fs = require("fs");
+
+// Define upload directory
+const uploadDir = path.join(__dirname, "public", "images", "uploads");
+
+// Ensure the directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("Created uploads directory:", uploadDir);
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/images/uploads");
+    cb(null, uploadDir); // Use absolute path
   },
   filename: function (req, file, cb) {
     const unique = uuidv4();
@@ -36,7 +46,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit (adjust as needed)
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
   fileFilter: fileFilter,
 });
 
