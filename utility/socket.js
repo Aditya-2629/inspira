@@ -1,5 +1,5 @@
 const socketIo = require("socket.io");
-const userModel = require("./routes/users"); // Import your user model
+const userModel = require("../models/users.model"); // Import your user model
 
 module.exports = (server) => {
   const io = socketIo(server, {

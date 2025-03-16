@@ -4,7 +4,14 @@ const path = require("path");
 const fs = require("fs");
 
 // Define upload directory
-const uploadDir = path.join(__dirname, "public", "images", "uploads");
+const uploadDir = path.join(
+  __dirname,
+  "..",
+  "..",
+  "public",
+  "images",
+  "uploads"
+);
 
 // Ensure the directory exists
 if (!fs.existsSync(uploadDir)) {
@@ -26,18 +33,20 @@ const storage = multer.diskStorage({
 const fileFilter = (req, file, cb) => {
   const allowedTypes = [
     "image/jpeg",
+    "image/jpg",
     "image/png",
     "image/gif",
     "video/mp4",
     "video/webm",
     "video/ogg",
+    "video/mkv",
   ];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true); // Accept the file
   } else {
     cb(
       new Error(
-        "Only images (JPEG, PNG, GIF) and videos (MP4, WebM, OGG) are allowed"
+        "Only images (JPEG, PNG, GIF ,JPG) and videos (MP4, WebM, OGG) are allowed"
       ),
       false
     );

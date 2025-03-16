@@ -1,15 +1,15 @@
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
-const userModel = require("./users");
-const postModel = require("./post");
+const userModel = require("../models/users.model");
+const postModel = require("../models/post.model");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const upload = require("./multer"); // Multer configuration
+const upload = require("../utility/multer"); // Multer configuration
 const { uploadOnCloudinary } = require("../utility/cloudinary"); // Cloudinary utility
 const fs = require("fs");
-const io = require("../socket"); // Socket.io instance (still needed for likes/comments)
-const nodemailer = require("nodemailer");
+const io = require("../utility/socket"); // Socket.io instance (still needed for likes/comments)
+
 const crypto = require("crypto");
 const {
   sendWelcomeEmail,
@@ -199,6 +199,38 @@ router.post(
     }
   }
 );
+
+// DELETE route for posts
+router.delete("/posts/:id", isLoggedIn, async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.user._id; // From Passport.js
+
+    // Find the post
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Check if the user owns the post
+    if (post.user.toString() !== userId.toString()) {
+      return res
+        .status(403)
+        .json({ message: "You can only delete your own posts" });
+    }
+
+    // Delete the post
+    await Post.findByIdAndDelete(postId);
+
+    // Optional: Remove post reference from user's posts array
+    await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
+
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // Add new post page
 router.get("/add", isLoggedIn, (req, res) => {

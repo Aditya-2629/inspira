@@ -8,7 +8,7 @@ const { Server } = require("socket.io");
 const expressSession = require("express-session");
 const passport = require("passport");
 const indexRouter = require("./routes/index");
-const userModel = require("./routes/users");
+const userModel = require("./models/users.model");
 
 const app = express();
 const server = require("http").createServer(app);

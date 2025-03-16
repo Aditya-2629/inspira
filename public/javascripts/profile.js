@@ -89,6 +89,62 @@ if (elements.followBtn) {
   });
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  // Dropdown toggle
+  const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
+  dropdownToggles.forEach((toggle) => {
+    toggle.addEventListener("click", (e) => {
+      const dropdownMenu =
+        e.target.closest(".dropdown-toggle").nextElementSibling;
+      dropdownMenu.classList.toggle("hidden");
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    const dropdowns = document.querySelectorAll(".dropdown-menu");
+    dropdowns.forEach((dropdown) => {
+      if (
+        !dropdown.contains(e.target) &&
+        !e.target.closest(".dropdown-toggle")
+      ) {
+        dropdown.classList.add("hidden");
+      }
+    });
+  });
+
+  // Delete post functionality
+  const deleteButtons = document.querySelectorAll(".delete-post");
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", async (e) => {
+      const postId = e.target
+        .closest(".delete-post")
+        .getAttribute("data-post-id");
+      if (confirm("Are you sure you want to delete this post?")) {
+        try {
+          const response = await fetch(`/posts/${postId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            alert(result.message);
+            e.target.closest(".post-card").remove(); // Remove post from DOM
+          } else {
+            alert(result.message);
+          }
+        } catch (error) {
+          console.error("Error deleting post:", error);
+          alert("Failed to delete post");
+        }
+      }
+    });
+  });
+});
+
 // Like Post
 async function likePost(postId, button) {
   try {
