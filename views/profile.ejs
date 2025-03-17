@@ -13,6 +13,7 @@
           id="profilePic"
           src="<%= user.profilePic || '/images/default.png' %>"
           alt="Profile Picture"
+          class="w-24 h-24 rounded-full object-cover"
         />
         <svg
           id="profilePicLoader"
@@ -111,7 +112,10 @@
         </svg>
         <% if (currentUser && user._id.toString() ===
         currentUser._id.toString()) { %>
-        <span id="uploadIcon" class="upload-icon">
+        <span
+          id="uploadIcon"
+          class="upload-icon absolute bottom-0 right-0 bg-zinc-800 p-2 rounded-full"
+        >
           <i class="ri-pencil-fill text-white text-lg"></i>
         </span>
         <% } %>
@@ -160,25 +164,24 @@
   </div>
 
   <!-- Posts Section -->
-  <!-- Posts Section -->
-  <div class="masonry-grid">
+  <div class="masonry-grid columns-1 sm:columns-2 md:columns-3 gap-4">
     <% if (user.posts.length > 0) { %> <% user.posts.forEach((post, index) => {
     %>
     <div
-      class="post-card break-inside-avoid mb-4 bg-zinc-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+      class="post-card break-inside-avoid mb-4 bg-zinc-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
       style="animation-delay: <%= (index * 0.1) .toFixed(2) %>s"
     >
       <!-- Media Container -->
       <div class="relative overflow-hidden rounded-t-xl">
         <div
-          class="skeleton absolute inset-0 <%= post.image ? 'hidden' : '' %>"
+          class="skeleton absolute inset-0 bg-zinc-700 animate-pulse <%= post.image ? 'hidden' : '' %>"
         ></div>
         <% if (post.image) { %>
         <a href="/post/<%= post._id %>">
           <% if (post.image.match(/\.(mp4|webm|ogg)$/i)) { %>
           <video
             src="<%= post.image.replace('/upload/', '/upload/f_auto:video,q_auto,w_400,h_400,c_limit/') %>"
-            class="post-media"
+            class="post-media w-full h-auto"
             preload="metadata"
             muted
             playsinline
@@ -189,7 +192,7 @@
           <img
             src="<%= post.image.replace('/upload/', '/upload/f_auto,q_auto,w_400,h_400,c_limit/') %>"
             alt="<%= post.title %>"
-            class="post-media"
+            class="post-media w-full h-auto"
             loading="lazy"
             onload="this.previousElementSibling.style.display = 'none'"
           />
@@ -198,10 +201,10 @@
         <% } %>
         <!-- Like Button -->
         <button
-          class="like-btn <%= post.likes.includes(currentUser?._id) ? 'liked' : '' %> absolute bottom-2 right-2"
+          class="like-btn absolute bottom-2 right-2 p-2 rounded-full bg-zinc-800 bg-opacity-50 hover:bg-opacity-75 transition <%= post.likes.includes(currentUser?._id) ? 'liked text-red-500' : 'text-white' %>"
           onclick="likePost('<%= post._id %>', this)"
         >
-          <svg viewBox="0 0 24 24">
+          <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current">
             <path
               d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
             />
@@ -211,11 +214,11 @@
         <% if (currentUser && user._id.toString() === currentUser._id.toString()
         && post.user.toString() === currentUser._id.toString()) { %>
         <div class="absolute top-2 right-2">
-          <!-- Dropdown Trigger (Three dots icon) -->
-          <button class="dropdown-toggle focus:outline-none text-white">
+          <button
+            class="dropdown-toggle focus:outline-none p-2 rounded-full bg-zinc-800 bg-opacity-50 hover:bg-opacity-75 transition text-white"
+          >
             <i class="ri-more-2-fill text-xl"></i>
           </button>
-          <!-- Dropdown Menu -->
           <div
             class="dropdown-menu hidden absolute right-0 mt-2 w-32 bg-zinc-800 text-white rounded-lg shadow-lg z-10"
           >
@@ -231,13 +234,12 @@
       </div>
       <!-- Content Section -->
       <div class="p-4">
-        <h3 class="text-sm font-semibold mb-1"><%= post.title %></h3>
+        <h3 class="text-sm font-semibold mb-1 text-white"><%= post.title %></h3>
         <a
           href="/profile/<%= user._id %>"
           class="text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+          >@<%= user.username %></a
         >
-          @<%= user.username %>
-        </a>
         <div class="text-xs text-zinc-400 mt-1">
           ❤️ <span class="like-count"><%= post.likes.length %></span> likes
         </div>
@@ -249,6 +251,7 @@
     </p>
     <% } %>
   </div>
+
   <!-- Follow List Modal -->
   <div
     id="followListModal"
@@ -270,11 +273,14 @@
   <form id="uploadForm" hidden>
     <input type="file" name="image" id="profilePicInput" accept="image/*" />
   </form>
-  <div id="toast" class="toast"></div>
+  <div
+    id="toast"
+    class="toast fixed bottom-4 right-4 bg-zinc-800 text-white p-3 rounded-lg shadow-lg hidden"
+  ></div>
 </div>
+
 <script>
-  const currentUserId = "<%= user._id %>"; // Define currentUserId here
+  const currentUserId = "<%= user._id %>";
 </script>
 <script src="/javascripts/profile.js"></script>
-
 <%- include('./partials/footer.ejs') %>
